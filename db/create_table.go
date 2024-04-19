@@ -25,10 +25,10 @@ func InsertJob(db *sql.DB, job models.Job) models.Job {
 	return job
 }
 
-func GetAvailableJobs(db *sql.DB) ([]models.Job, error) {
-
+func GetAvailableJobs() ([]models.Job, error) {
+	conn := GetConnection()
 	query := "SELECT id, description, name, cron, enabled, executed, args FROM job WHERE enabled = true"
-	rows, err := db.Query(query)
+	rows, err := conn.Query(query)
 	if err != nil {
 		slog.Error("Error to get available jobs", "error", err)
 	}
@@ -44,4 +44,48 @@ func GetAvailableJobs(db *sql.DB) ([]models.Job, error) {
 		jobs = append(jobs, job)
 	}
 	return jobs, nil
+}
+
+func SetJobExecuted(id int64, exec int) {
+	conn := GetConnection()
+	upd := "UPDATE job SET executed = :exec WHERE id = :id"
+	result, err := conn.Exec(upd, exec, id)
+    defer conn.Close()
+	if err != nil {
+		slog.Error("UPDATE", "msg", err)
+	}
+	_, err = result.LastInsertId()
+	if err != nil {
+		slog.Error("UPDATE", "msg", err)
+	}
+    slog.Info("SET_JOB_EXECUTED","value", exec)
+}
+
+func LoadJob(id int64) (models.Job, error) {
+	conn := GetConnection()
+	query := "SELECT id, description, name, cron, enabled, executed, args FROM job WHERE enabled = true and id = :id"
+	row := conn.QueryRow(query, id)
+    defer conn.Close()
+	var job models.Job
+	if err := row.Scan(&job.Id, &job.Description, &job.Name, &job.Cron, &job.Enabled,
+		&job.Executed, &job.Args); err != nil {
+		slog.Error("Error to scan jobs", "error", err)
+		return job, err
+	}
+	return job, nil
+}
+
+func SetAllJobsToExecute() {
+	conn := GetConnection()
+	upd := "UPDATE job SET executed = 0 WHERE enabled = true"
+	result, err := conn.Exec(upd)
+    defer conn.Close()
+	if err != nil {
+		slog.Error("UPDATE", "msg", err)
+	}
+	_, err = result.LastInsertId()
+	if err != nil {
+		slog.Error("UPDATE", "msg", err)
+	}
+    slog.Info("SET_ALL_JOBS_EXECUTED","value", exec)
 }

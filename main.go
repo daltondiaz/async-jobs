@@ -1,7 +1,6 @@
 package main
 
 import (
-	"daltondiaz/async-jobs/db"
 	"log"
 	"os"
 	"os/signal"
@@ -12,7 +11,6 @@ import (
 
 func main() {
 	pkg.Run()
-	db.Connect()
     //http.Start()
     listen()
 }

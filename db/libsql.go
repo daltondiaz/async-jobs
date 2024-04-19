@@ -32,27 +32,28 @@ func Insert(db *sql.DB){
 	var job models.Job
 	job.Description = "My First Job"
     job.Name = "first_job"
-    job.Cron = "*/30 * * * * *"
+    job.Cron = "@every 5s"
     job.Args = "10"
 	job.Enabled = true
 	result := InsertJob(db, job)
 	log.Println(result.Id)
 }
 
-func Connect() *sql.DB {
-	db, err := sql.Open("libsql", "file:test.db")
+func GetConnection() *sql.DB {
+    dbName := "file:./local.db"
+	db, err := sql.Open("libsql", dbName)
 	if err != nil {
 		log.Fatal(err)
 	}
-	defer db.Close()
-
 	ctx := context.Background()
 
 	ping(ctx, db)
-	res := CreateTableJobs(db)
-	log.Println(res.LastInsertId())
-    Insert(db)
+	//res := CreateTableJobs(db)
+	//log.Println(res.LastInsertId())
+   // Insert(db)
     return db
 }
 
-
+func CloseConnection(db *sql.DB){
+    defer db.Close()
+}
