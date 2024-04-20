@@ -12,6 +12,8 @@ import (
 	"github.com/robfig/cron/v3"
 )
 
+var cronJob *cron.Cron
+
 func execution(job models.Job, c *cron.Cron) {
 	slog.Info(fmt.Sprintf("JOB %d: ", job.Id), "job", job)
 	id, _ := c.AddFunc(job.Cron, func() {
@@ -33,19 +35,31 @@ func execution(job models.Job, c *cron.Cron) {
 			db.SetJobExecuted(lastestJob.Id, models.EXECUTED)
 		}
 	})
-	slog.Info("CRON", "id", id)
+    job.CronId = int(id) 
+    db.SetCronId(job.Id, int(id))
+	slog.Info("CRON", "id", int(id))
 }
 
-func Run() {
+// Start the crons to scheduler the jobs
+func Start() {
 	db.SetAllJobsToExecute()
-	// run jobs according to cron
 	jobs, err := db.GetAvailableJobs()
 	if err != nil {
 		log.Println(err)
 	}
-	c := cron.New()
+	cronJob = cron.New()
 	for _, job := range jobs {
-		execution(job, c)
+		execution(job, cronJob)
 	}
-	c.Start()
+	cronJob.Start()
+}
+
+// Add new Job and create a new cron
+func AddNewJob(job models.Job){
+    job = db.InsertJob(job)
+    execution(job, cronJob)
+}
+
+// Stop job
+func StopJob(job models.Job){
 }

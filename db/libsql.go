@@ -28,19 +28,27 @@ func ping(ctx context.Context, db *sql.DB) {
 	}
 }
 
-func Insert(db *sql.DB){
+func Insert() {
 	var job models.Job
 	job.Description = "My First Job"
-    job.Name = "first_job"
-    job.Cron = "@every 5s"
-    job.Args = "10"
+	job.Name = "first_job"
+	job.Cron = "@every 5s"
+	job.Args = "10"
 	job.Enabled = true
-	result := InsertJob(db, job)
+	result := InsertJob(job)
+	log.Println(result.Id)
+
+	job.Description = "Second Job"
+	job.Name = "second_job"
+	job.Cron = "@every 3s"
+	job.Args = "11111"
+	job.Enabled = true
+	result = InsertJob(job)
 	log.Println(result.Id)
 }
 
 func GetConnection() *sql.DB {
-    dbName := "file:./local.db"
+	dbName := "file:./local.db"
 	db, err := sql.Open("libsql", dbName)
 	if err != nil {
 		log.Fatal(err)
@@ -48,12 +56,8 @@ func GetConnection() *sql.DB {
 	ctx := context.Background()
 
 	ping(ctx, db)
-	//res := CreateTableJobs(db)
+	// CreateTableJobs(db)
 	//log.Println(res.LastInsertId())
-   // Insert(db)
-    return db
-}
-
-func CloseConnection(db *sql.DB){
-    defer db.Close()
+	// Insert(db)
+	return db
 }

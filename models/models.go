@@ -11,6 +11,7 @@ type Job struct {
 	Enabled     bool   `json:"enabled"`
 	Executed    int    `json:"executed"` // 0 - Not Executed 1 - Executing
 	Args        string `json:"args"`
+	CronId      int `json:"cronId"`
 }
 
 type Arg struct {

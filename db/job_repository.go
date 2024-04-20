@@ -7,16 +7,18 @@ import (
 )
 
 func CreateTableJobs(db *sql.DB) sql.Result {
-	res, err := db.Exec("DROP TABLE IF EXISTS job; CREATE TABLE IF NOT EXISTS job (id INTEGER PRIMARY KEY AUTOINCREMENT, description varchar(50), name varchar(50), cron varchar (15), enabled boolean default false, executed int default 0, args varchar(150) ) ")
+	res, err := db.Exec("DROP TABLE IF EXISTS job; CREATE TABLE IF NOT EXISTS job (id INTEGER PRIMARY KEY AUTOINCREMENT, description varchar(50), name varchar(50), cron varchar (15), enabled boolean default false, executed int default 0, args varchar(150), id_cron INTEGER ) ")
 	if err != nil {
 		slog.Error("Error to create table Job", "msg", err)
 	}
 	return res
 }
 
-func InsertJob(db *sql.DB, job models.Job) models.Job {
+func InsertJob(job models.Job) models.Job {
+	conn := GetConnection()
 	insertJob := "INSERT INTO job(description, name, cron, enabled, executed, args) VALUES (:desc, :name, :cron, :enabled, :exec, :args)"
-	result, err := db.Exec(insertJob, job.Description, job.Name, job.Cron, job.Enabled, job.Executed, job.Args)
+	result, err := conn.Exec(insertJob, job.Description, job.Name, job.Cron, job.Enabled, job.Executed, job.Args)
+    defer conn.Close()
 	if err != nil {
 		slog.Error("Error to inser new Job", "msg", err)
 	}
@@ -88,4 +90,19 @@ func SetAllJobsToExecute() {
 		slog.Error("UPDATE", "msg", err)
 	}
     slog.Info("SET_ALL_JOBS_EXECUTED","value", exec)
+}
+
+func SetCronId(id int64, cronId int) {
+	conn := GetConnection()
+    upd := "UPDATE job SET id_cron = :cronId WHERE id = :id"
+	result, err := conn.Exec(upd, cronId, id)
+    defer conn.Close()
+	if err != nil {
+		slog.Error("UPDATE", "msg", err)
+	}
+	_, err = result.LastInsertId()
+	if err != nil {
+		slog.Error("UPDATE", "msg", err)
+	}
+    slog.Info("SET_JOB_CRON_ID","value", cronId)
 }
