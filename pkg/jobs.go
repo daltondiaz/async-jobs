@@ -3,6 +3,7 @@ package pkg
 import (
 	"daltondiaz/async-jobs/db"
 	"daltondiaz/async-jobs/models"
+	"errors"
 	"fmt"
 	"log"
 	"log/slog"
@@ -54,12 +55,55 @@ func Start() {
 	cronJob.Start()
 }
 
-// Add new Job and create a new cron
-func AddNewJob(job models.Job){
-    job = db.InsertJob(job)
+// Add new or enabled Job and create a new cron
+func AddJobNextExecution(job models.Job){
     execution(job, cronJob)
 }
 
 // Stop job
 func StopJob(job models.Job){
+    cronJob.Remove(cron.EntryID(job.CronId))
+    slog.Info(fmt.Sprintf("JOB_STOP %d: ", job.Id), "cron id", job.CronId)
+}
+
+// Get status Job to know if is running or not 
+func StatusJob(id int64)(string, error){
+	job, err := db.LoadJob(id)
+
+    if err != nil {
+        return "", err
+    }
+
+    if job.Executed == models.EXECUTED {
+        return "Executed", nil
+    }
+    if job.Executed == models.EXECUTING {
+        return "Executing", nil
+    }
+    err = errors.New("Job Status not Found")
+    return "", err 
+}
+
+// Enabled the job loading its by Id and if enabled equals true add to a cron job 
+// in next exection or false stop execution of cron job
+func EnabledJob(id int64, enabled bool)(string, error){
+    if enabled == true {
+        err := db.SetEnabledJob(id, enabled)
+        if err != nil {
+            return "Error to set enabled value on Job", err
+        }
+        job, err := db.LoadJob(id)
+        if err != nil {
+            return "Error to Load Job", err
+        }
+        AddJobNextExecution(job)
+        return "Job was Enabled with success", nil
+    }
+
+    job, err := db.LoadJob(id)
+    if err != nil{
+        return "Error to Load Job", err
+    }
+    StopJob(job)
+    return "Job was Disabled with success", nil
 }

@@ -27,27 +27,8 @@ func ping(ctx context.Context, db *sql.DB) {
 		os.Exit(1)
 	}
 }
-
-func Insert() {
-	var job models.Job
-	job.Description = "My First Job"
-	job.Name = "first_job"
-	job.Cron = "@every 5s"
-	job.Args = "10"
-	job.Enabled = true
-	result := InsertJob(job)
-	log.Println(result.Id)
-
-	job.Description = "Second Job"
-	job.Name = "second_job"
-	job.Cron = "@every 3s"
-	job.Args = "11111"
-	job.Enabled = true
-	result = InsertJob(job)
-	log.Println(result.Id)
-}
-
 func GetConnection() *sql.DB {
+    // TODO add Turso
 	dbName := "file:./local.db"
 	db, err := sql.Open("libsql", dbName)
 	if err != nil {
