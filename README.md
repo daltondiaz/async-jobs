@@ -19,8 +19,125 @@ Go lang
 
 If it's your first time run
 
-`go mod tidy`
+`go mod tidy` or `go get .`
 
 and to run the project
 
 `go run.`
+
+
+# Managment
+
+It was develop a simple API to CREATE, DISABLED/ENABLED, check STATUS and STOP a job.
+
+## Create a New Job 
+
+To create a new Job 
+
+- URL:http://localhost:8080/job/new
+- METHOD: POST
+
+Request:
+```
+curl --request POST \
+  --url http://localhost:8080/job/new \
+  --header 'Content-Type: application/json' \
+  --data '{
+	"description":"Api Job",
+	"name": "api_job",
+	"cron": "@every 1s", 
+	"enabled": true,
+	"args": "2912321"
+}'
+```
+Response:
+```
+{
+	"Id": 10,
+	"description": "Api Job",
+	"name": "api_job",
+	"cron": "@every 1s",
+	"enabled": true,
+	"executed": 0,
+	"args": "2912321",
+	"cronId": 0
+}```
+
+## Job Status
+
+To see the status of a Job 
+
+- URL:http://localhost:8080/job/status/:id
+- METHOD: GET
+- Params:
+-- id: The id of Job
+
+Request:
+```
+curl --request GET \
+  --url http://localhost:8080/job/status/10 \
+  --header 'Content-Type: application/json' \
+```
+
+Response:
+```
+{
+	"id": "10",
+	"status": "Executing"
+}
+```
+
+## Job Stop
+
+To STOP the execution of the job, but if the application is restart this job stopped will start again
+
+- URL:http://localhost:8080/job/stop/:id
+- METHOD: GET
+- Params:
+-- id: The id of Job
+
+Request:
+```
+curl --request GET \
+  --url http://localhost:8080/job/stop/10 \
+  --header 'Content-Type: application/json' \
+```
+
+The response is the own job
+
+Response:
+```
+{
+	"Id": 10,
+	"description": "Api Job",
+	"name": "api_job",
+	"cron": "@every 1s",
+	"enabled": true,
+	"executed": 1,
+	"args": "2912321",
+	"cronId": 6
+}
+```
+
+## Job Enable/Disable
+
+- URL:http://localhost:8080/job/enabled/:id/:enabled
+- METHOD: GET
+- Params:
+-- id: The id of Job
+-- enabled: Value true or false 
+
+Request:
+```
+curl --request GET \
+  --url http://localhost:8080/job/enabled/10/true \
+  --header 'Content-Type: application/json' \
+```
+
+Response:
+```
+{
+	"enabled": "true",
+	"id": "10",
+	"status": "Job was Enabled with success"
+}```
