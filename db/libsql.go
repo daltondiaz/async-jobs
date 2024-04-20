@@ -2,7 +2,6 @@ package db
 
 import (
 	"context"
-	"daltondiaz/async-jobs/models"
 	"database/sql"
 	"log"
 	"os"
