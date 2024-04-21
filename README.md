@@ -25,6 +25,15 @@ and to run the project
 
 `go run.`
 
+## Create/Configure .env (Required)
+
+Create .env file in the root of project and configure the Turso variables
+
+```
+TURSO_DATABASE_URL=libsql://[DATABASE].turso.io
+TURSO_AUTH_TOKEN=[TOKEN]
+```
+
 ## Table (Optional)
 
 When the application start is checked if the table job exists, if not create, but if this not happen you can run the following create table:

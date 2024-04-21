@@ -29,9 +29,6 @@ func ping(ctx context.Context, db *sql.DB) {
 	}
 }
 func GetConnection() *sql.DB {
-    // TODO improve to use local db and replica
-	//dbName := "file:./local.db"
-    /// url := "[DATABASE].turso.io?authToken=[TOKEN]"
     LoadEnv()
     database := os.Getenv("TURSO_DATABASE_URL")
     token := os.Getenv("TURSO_AUTH_TOKEN")
