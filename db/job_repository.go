@@ -11,7 +11,7 @@ import (
 // Check if table job exists, this help for now to don't use some migration framework
 func CheckExistsJobTable(target string) (bool, error) {
 	conn := GetConnection()
-    query := "SELECT name FROM sqlite_master WHERE type='table' AND name=:targe"
+    query := "SELECT name FROM sqlite_master WHERE type='table' AND name=?"
 	row := conn.QueryRow(query, target)
     defer conn.Close()
     var table string
@@ -39,7 +39,7 @@ func CreateTableJobs() sql.Result {
 // Insert new Job in database
 func InsertJob(job models.Job) (models.Job, error) {
 	conn := GetConnection()
-	insertJob := "INSERT INTO job(description, name, cron, enabled, executed, args) VALUES (:desc, :name, :cron, :enabled, :exec, :args)"
+    insertJob := "INSERT INTO job(description, name, cron, enabled, executed, args) VALUES (?, ?, ?, ?, ?, ?)"
 	result, err := conn.Exec(insertJob, job.Description, job.Name, job.Cron, job.Enabled, job.Executed, job.Args)
     defer conn.Close()
 	if err != nil {
@@ -54,7 +54,7 @@ func InsertJob(job models.Job) (models.Job, error) {
 // Get all Jobs enabled that means are available
 func GetAvailableJobs() ([]models.Job, error) {
 	conn := GetConnection()
-	query := "SELECT id, description, name, cron, enabled, executed, args FROM job WHERE enabled = true"
+	query := "SELECT id, description, name, cron, enabled, executed, args, id_cron FROM job WHERE enabled = true"
 	rows, err := conn.Query(query)
 	if err != nil {
 		slog.Error("Error to get available jobs", "error", err)
@@ -76,7 +76,7 @@ func GetAvailableJobs() ([]models.Job, error) {
 // Set the execution of Job
 func SetJobExecuted(id int64, exec int) {
 	conn := GetConnection()
-	upd := "UPDATE job SET executed = :exec WHERE id = :id"
+	upd := "UPDATE job SET executed = ? WHERE id = ?"
 	result, err := conn.Exec(upd, exec, id)
     defer conn.Close()
 	if err != nil {
@@ -93,7 +93,7 @@ func SetJobExecuted(id int64, exec int) {
 // or to know the state
 func LoadJob(id int64) (models.Job, error) {
 	conn := GetConnection()
-	query := "SELECT id, description, name, cron, enabled, executed, args, id_cron FROM job WHERE enabled = true and id = :id"
+	query := "SELECT id, description, name, cron, enabled, executed, args, id_cron FROM job WHERE enabled = true and id = ?"
 	row := conn.QueryRow(query, id)
     defer conn.Close()
 	var job models.Job
@@ -124,7 +124,7 @@ func SetAllJobsToExecute() {
 // Set the value of Cron id on Job, help us in the future to stop the cron of the on job
 func SetCronId(id int64, cronId int) {
 	conn := GetConnection()
-    upd := "UPDATE job SET id_cron = :cronId WHERE id = :id"
+    upd := "UPDATE job SET id_cron = ? WHERE id = ?"
 	result, err := conn.Exec(upd, cronId, id)
     defer conn.Close()
 	if err != nil {
@@ -140,7 +140,7 @@ func SetCronId(id int64, cronId int) {
 // Enabled Job  
 func SetEnabledJob(id int64, enabled bool) error{
 	conn := GetConnection()
-    upd := "UPDATE job SET enabled = :enabled WHERE id = :id"
+    upd := "UPDATE job SET enabled = ? WHERE id = ?"
 	result, err := conn.Exec(upd, enabled, id)
     defer conn.Close()
 	if err != nil {

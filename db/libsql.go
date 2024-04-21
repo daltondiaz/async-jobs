@@ -3,9 +3,11 @@ package db
 import (
 	"context"
 	"database/sql"
+	"fmt"
 	"log"
 	"os"
 
+	"github.com/joho/godotenv"
 	_ "github.com/mattn/go-sqlite3"
 	_ "github.com/tursodatabase/libsql-client-go/libsql"
 )
@@ -27,17 +29,27 @@ func ping(ctx context.Context, db *sql.DB) {
 	}
 }
 func GetConnection() *sql.DB {
-    // TODO add Turso
-	dbName := "file:./local.db"
+    // TODO improve to use local db and replica
+	//dbName := "file:./local.db"
+    /// url := "[DATABASE].turso.io?authToken=[TOKEN]"
+    LoadEnv()
+    database := os.Getenv("TURSO_DATABASE_URL")
+    token := os.Getenv("TURSO_AUTH_TOKEN")
+    dbName := fmt.Sprintf("%s?authToken=%s", database, token)
 	db, err := sql.Open("libsql", dbName)
 	if err != nil {
 		log.Fatal(err)
+        os.Exit(1)
 	}
-	ctx := context.Background()
-
-	ping(ctx, db)
-	// CreateTableJobs(db)
-	//log.Println(res.LastInsertId())
-	// Insert(db)
 	return db
 }
+func LoadEnv() {
+	err := godotenv.Load()
+
+	if err != nil {
+		log.Println(err)
+		log.Fatal("Error to load .env file on root of project")
+	}
+
+}
+
