@@ -25,9 +25,9 @@ and to run the project
 
 `go run.`
 
-## Table
+## Table (Optional)
 
-If the table job ins't existi you can use this create table:
+When the application start is checked if the table job exists, if not create, but if this not happen you can run the following create table:
 
 ```sql
 create table job (id INTEGER primary key AUTOINCREMENT,
