@@ -3,11 +3,33 @@ package db
 import (
 	"daltondiaz/async-jobs/models"
 	"database/sql"
+	"errors"
+	"fmt"
 	"log/slog"
 )
 
-func CreateTableJobs(db *sql.DB) sql.Result {
-	res, err := db.Exec("DROP TABLE IF EXISTS job; CREATE TABLE IF NOT EXISTS job (id INTEGER PRIMARY KEY AUTOINCREMENT, description varchar(50), name varchar(50), cron varchar (15), enabled boolean default false, executed int default 0, args varchar(150), id_cron INTEGER ) ")
+// Check if table job exists, this help for now to don't use some migration framework
+func CheckExistsJobTable(target string) (bool, error) {
+	conn := GetConnection()
+    query := "SELECT name FROM sqlite_master WHERE type='table' AND name=:targe"
+	row := conn.QueryRow(query, target)
+    defer conn.Close()
+    var table string
+	if err := row.Scan(&table); err != nil {
+		slog.Error("Error to scan tables exists result", "error", err)
+		return false, err
+	}
+    if table == target{
+        return true, nil
+    }
+	return false, errors.New(fmt.Sprintf("Table %s not found", target))
+}
+
+// Create main table Job
+func CreateTableJobs() sql.Result {
+	conn := GetConnection()
+	res, err := conn.Exec("CREATE TABLE IF NOT EXISTS job (id INTEGER PRIMARY KEY AUTOINCREMENT, description varchar(50), name varchar(50), cron varchar (15), enabled boolean default false, executed int default 0, args varchar(150), id_cron INTEGER ) ")
+    defer conn.Close()
 	if err != nil {
 		slog.Error("Error to create table Job", "msg", err)
 	}

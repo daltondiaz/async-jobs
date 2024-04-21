@@ -13,7 +13,7 @@ For solving this, I thought in using the power of Go Lang to create a simple app
 # Required
 
 Go lang
-``
+`1.21.4`
 
 # Getting Started
 
@@ -25,8 +25,23 @@ and to run the project
 
 `go run.`
 
+## Table
 
-# Managment
+If the table job ins't existi you can use this create table:
+
+```sql
+create table job (id INTEGER primary key AUTOINCREMENT,
+    description varchar(50),
+    name varchar(50),
+    cron varchar (15),
+    enabled boolean default false,
+    executed int default 0,
+    args varchar(150),
+    id_cron INTEGER 
+);
+```
+
+# Managment API
 
 It was develop a simple API to CREATE, DISABLED/ENABLED, check STATUS and STOP a job.
 

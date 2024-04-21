@@ -43,6 +43,14 @@ func execution(job models.Job, c *cron.Cron) {
 
 // Start the crons to scheduler the jobs
 func Start() {
+
+    hasTableJob, err := db.CheckExistsJobTable("job")
+    if err != nil {
+        slog.Error("Error to check if main table job exists", "error", err)
+    }
+    if !hasTableJob {
+        db.CreateTableJobs()
+    }
 	db.SetAllJobsToExecute()
 	jobs, err := db.GetAvailableJobs()
 	if err != nil {
