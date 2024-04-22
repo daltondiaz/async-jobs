@@ -1,7 +1,7 @@
 # Async Jobs
 
 This project has the goal to "manage" async jobs, when I say manage is not executing the one function
-if it is running and can execute many jobs asynchronously.
+if it is running and can execute many jobs asynchronously. Today only is possible execute a php file
 
 ## Problem/Solution
 
@@ -32,7 +32,22 @@ Create .env file in the root of project and configure the Turso variables
 ```
 TURSO_DATABASE_URL=libsql://[DATABASE].turso.io
 TURSO_AUTH_TOKEN=[TOKEN]
+PATH_FILE=path_to_file_that_will_be_executed
 ```
+
+At PATH_FILE for example I use 
+
+`PATH_FILE=/home/dalton/Dev/personal/async-jobs/test.php`
+
+```Php
+<?php
+
+$arg = $argv[1];
+$sec = random_int(11,15);
+sleep($sec);
+echo "item ".$arg." test ".$sec. " s";
+```
+
 
 ## Table (Optional)
 

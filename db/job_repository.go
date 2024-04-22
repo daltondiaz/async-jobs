@@ -54,7 +54,7 @@ func InsertJob(job models.Job) (models.Job, error) {
 // Get all Jobs enabled that means are available
 func GetAvailableJobs() ([]models.Job, error) {
 	conn := GetConnection()
-	query := "SELECT id, description, name, cron, enabled, executed, args, id_cron FROM job WHERE enabled = true"
+	query := "SELECT id, description, name, cron, enabled, executed, args FROM job WHERE enabled = true"
 	rows, err := conn.Query(query)
 	if err != nil {
 		slog.Error("Error to get available jobs", "error", err)

@@ -29,7 +29,6 @@ func ping(ctx context.Context, db *sql.DB) {
 	}
 }
 func GetConnection() *sql.DB {
-    LoadEnv()
     database := os.Getenv("TURSO_DATABASE_URL")
     token := os.Getenv("TURSO_AUTH_TOKEN")
     dbName := fmt.Sprintf("%s?authToken=%s", database, token)

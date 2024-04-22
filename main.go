@@ -5,11 +5,13 @@ import (
 	"os"
 	"os/signal"
 
+	"daltondiaz/async-jobs/db"
 	"daltondiaz/async-jobs/http"
 	"daltondiaz/async-jobs/pkg"
 )
 
 func main() {
+    db.LoadEnv()
 	pkg.Start()
     http.Start()
     listen()

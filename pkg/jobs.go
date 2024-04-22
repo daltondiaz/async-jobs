@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"log"
 	"log/slog"
+	"os"
 	"os/exec"
 	"time"
 
@@ -24,8 +25,8 @@ func execution(job models.Job, c *cron.Cron) {
             idExecution := time.Now().Unix()
 			slog.Info(fmt.Sprintf("START_EXEC %d: ", idExecution), "job", lastestJob.Name)
 			db.SetJobExecuted(lastestJob.Id, models.EXECUTING)
-            // TODO change by args
-			path := "/home/dalton/Dev/personal/async-jobs/test.php"
+            // TODO change to came together with args?
+			path := os.Getenv("PATH_FILE") 
 			cmd := exec.Command("php", path, lastestJob.Args)
 			stdout, err := cmd.Output()
 			if err != nil {
@@ -43,7 +44,6 @@ func execution(job models.Job, c *cron.Cron) {
 
 // Start the crons to scheduler the jobs
 func Start() {
-
     hasTableJob, err := db.CheckExistsJobTable("job")
     if err != nil {
         slog.Error("Error to check if main table job exists", "error", err)
