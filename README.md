@@ -27,7 +27,13 @@ and to run the project
 
 ## Create/Configure .env (Required)
 
-Create .env file in the root of project and configure the Turso variables
+Create .env file in the root of project and configure the Turso variables.
+
+You can do 
+
+`cp example_env .env`
+
+and fill the parameters
 
 ```
 TURSO_DATABASE_URL=libsql://[DATABASE].turso.io
@@ -47,6 +53,9 @@ $sec = random_int(11,15);
 sleep($sec);
 echo "item ".$arg." test ".$sec. " s";
 ```
+
+You can do everything that you want inside this php file, send reports, process data and etc.
+In the future I want to be possible execute any file that you want.
 
 
 ## Table (Optional)
