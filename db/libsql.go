@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strings"
 
 	_ "github.com/mattn/go-sqlite3"
 	_ "github.com/tursodatabase/libsql-client-go/libsql"
@@ -28,14 +29,31 @@ func ping(ctx context.Context, db *sql.DB) {
 	}
 }
 func GetConnection() *sql.DB {
-    database := os.Getenv("TURSO_DATABASE_URL")
-    token := os.Getenv("TURSO_AUTH_TOKEN")
-    dbName := fmt.Sprintf("%s?authToken=%s", database, token)
+
+	env := os.Getenv("ENV")
+
+	if strings.ToLower("prod") != env {
+        return getLocalConnection()
+	}
+
+	database := os.Getenv("TURSO_DATABASE_URL")
+	token := os.Getenv("TURSO_AUTH_TOKEN")
+	dbName := fmt.Sprintf("%s?authToken=%s", database, token)
 	db, err := sql.Open("libsql", dbName)
 	if err != nil {
 		log.Fatal(err)
-        os.Exit(1)
+		os.Exit(1)
 	}
 	return db
 }
 
+func getLocalConnection() *sql.DB {
+	dbName := "file:./local.db"
+	db, err := sql.Open("libsql", dbName)
+	if err != nil {
+		log.Fatal(err)
+	}
+	ctx := context.Background()
+	ping(ctx, db)
+	return db
+}
