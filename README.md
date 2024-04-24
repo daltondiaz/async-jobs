@@ -1,7 +1,9 @@
 # Async Jobs
 
 This project has the goal to "manage" async jobs, when I say manage is not executing the one function
-if it is running and can execute many jobs asynchronously. Today only is possible execute a php file
+if it is running and can execute many jobs asynchronously. 
+
+![](docs/flow_project.png)
 
 ## Problem/Solution
 
@@ -9,6 +11,7 @@ When I'm using Php sometimes we need to execute tasks or jobs in the background,
 was not implemented in a simple way, and sometimes we need to use many other tools to do that, for example: Php send a message to one queue in RabbitMQ, and Supervisord call other Php file who read the message of queue and run something stuff in one process.
 
 For solving this, I thought in using the power of Go Lang to create a simple application to solve.
+
 
 # Required
 
@@ -38,7 +41,7 @@ and fill the parameters
 ```
 TURSO_DATABASE_URL=libsql://[DATABASE].turso.io
 TURSO_AUTH_TOKEN=[TOKEN]
-PATH_FILE=path_to_file_that_will_be_executed
+ENV=prod #prod or local, if not configured or any other value different of prod is local by default
 ```
 
 At PATH_FILE for example I use 
@@ -85,6 +88,12 @@ To create a new Job
 - URL:http://localhost:8080/job/new
 - METHOD: POST
 
+Important to see that in **args** you should pass:
+
+- args: Can be a empty string you won't use
+- cmd: The command that will running in the server 
+- path: Path of file that should be executed 
+
 Request:
 ```
 curl --request POST \
@@ -95,7 +104,11 @@ curl --request POST \
 	"name": "api_job",
 	"cron": "@every 1s", 
 	"enabled": true,
-	"args": "2912321"
+	"args": {
+		"args": "10",
+		"cmd": "php",
+		"path": "/home/dalton/Dev/personal/async-jobs/test.php"
+	}
 }'
 ```
 Response:

@@ -10,11 +10,13 @@ type Job struct {
 	Cron        string `json:"cron"`
 	Enabled     bool   `json:"enabled"`
 	Executed    int    `json:"executed"` // 0 - Not Executed 1 - Executing
-	Args        string `json:"args"`
+	Args        Args   `json:"args"`
+	ArgsStr     string 
 	CronId      int `json:"cronId"`
 }
 
-type Arg struct {
-	arguments string
-	file      string
+type Args struct {
+	Args string `json:"args"` // argument
+	Path string `json:"path"` // path of file
+	Cmd  string `json:"cmd"`  // command to be executed
 }

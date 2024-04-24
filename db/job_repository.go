@@ -2,6 +2,7 @@ package db
 
 import (
 	"daltondiaz/async-jobs/models"
+	"daltondiaz/async-jobs/utils"
 	"database/sql"
 	"errors"
 	"fmt"
@@ -39,8 +40,13 @@ func CreateTableJobs() sql.Result {
 // Insert new Job in database
 func InsertJob(job models.Job) (models.Job, error) {
 	conn := GetConnection()
+    str, err := utils.MarshalJobArgs(job.Args)
+    if err != nil {
+        return job, errors.New("Job args is invalid")
+    }
+    job.ArgsStr = str
     insertJob := "INSERT INTO job(description, name, cron, enabled, executed, args) VALUES (?, ?, ?, ?, ?, ?)"
-	result, err := conn.Exec(insertJob, job.Description, job.Name, job.Cron, job.Enabled, job.Executed, job.Args)
+	result, err := conn.Exec(insertJob, job.Description, job.Name, job.Cron, job.Enabled, job.Executed, job.ArgsStr)
     defer conn.Close()
 	if err != nil {
 		slog.Error("Error to inser new Job", "msg", err)
@@ -64,10 +70,11 @@ func GetAvailableJobs() ([]models.Job, error) {
 	for rows.Next() {
 		var job models.Job
 		if err := rows.Scan(&job.Id, &job.Description, &job.Name, &job.Cron, &job.Enabled,
-			&job.Executed, &job.Args); err != nil {
+			&job.Executed, &job.ArgsStr); err != nil {
 			slog.Error("Error to scan jobs", "error", err)
 			return nil, err
 		}
+        job.Args, _ = utils.UnmarshalJobArgs(job.ArgsStr)
 		jobs = append(jobs, job)
 	}
 	return jobs, nil
@@ -98,10 +105,11 @@ func LoadJob(id int64) (models.Job, error) {
     defer conn.Close()
 	var job models.Job
 	if err := row.Scan(&job.Id, &job.Description, &job.Name, &job.Cron, &job.Enabled,
-		&job.Executed, &job.Args, &job.CronId); err != nil {
+		&job.Executed, &job.ArgsStr, &job.CronId); err != nil {
 		slog.Error("Error to scan jobs", "error", err)
 		return job, err
 	}
+    job.Args, _ = utils.UnmarshalJobArgs(job.ArgsStr)
 	return job, nil
 }
 
