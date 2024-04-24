@@ -44,9 +44,7 @@ TURSO_AUTH_TOKEN=[TOKEN]
 ENV=prod #prod or local, if not configured or any other value different of prod is local by default
 ```
 
-At PATH_FILE for example I use 
-
-`PATH_FILE=/home/dalton/Dev/personal/async-jobs/test.php`
+I use like example to be executed this simple php file:
 
 ```Php
 <?php
