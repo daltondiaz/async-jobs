@@ -6,9 +6,12 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"path/filepath"
 	"strings"
+	"time"
 
 	_ "github.com/mattn/go-sqlite3"
+	"github.com/tursodatabase/go-libsql"
 	_ "github.com/tursodatabase/libsql-client-go/libsql"
 )
 
@@ -32,10 +35,47 @@ func GetConnection() *sql.DB {
 
 	env := os.Getenv("ENV")
 
-	if strings.ToLower("prod") != env {
-        return getLocalConnection()
+	if strings.ToLower("local") == env {
+		return getLocalConnection()
 	}
 
+	if strings.ToLower("replica") == env {
+		return modeReplica()
+	}
+
+	return onlyRemoteConnection()
+}
+
+func modeReplica() *sql.DB {
+	dbName := "local.db"
+	primaryUrl := "libsql://[DATABASE].turso.io"
+	authToken := "..."
+
+	dir, err := os.MkdirTemp("", "libsql-*")
+	if err != nil {
+		fmt.Println("Error creating temporary directory:", err)
+		os.Exit(1)
+	}
+	defer os.RemoveAll(dir)
+
+	dbPath := filepath.Join(dir, dbName)
+
+	connector, err := libsql.NewEmbeddedReplicaConnector(dbPath, primaryUrl,
+		libsql.WithAuthToken(authToken),
+        libsql.WithSyncInterval(time.Minute * 3),
+	)
+	if err != nil {
+		fmt.Println("Error creating connector:", err)
+		os.Exit(1)
+	}
+	defer connector.Close()
+
+	db := sql.OpenDB(connector)
+    return db
+}
+
+
+func onlyRemoteConnection() *sql.DB {
 	database := os.Getenv("TURSO_DATABASE_URL")
 	token := os.Getenv("TURSO_AUTH_TOKEN")
 	dbName := fmt.Sprintf("%s?authToken=%s", database, token)
