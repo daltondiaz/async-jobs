@@ -10,9 +10,7 @@ import (
 	"strings"
 	"time"
 
-	_ "github.com/mattn/go-sqlite3"
 	"github.com/tursodatabase/go-libsql"
-	_ "github.com/tursodatabase/libsql-client-go/libsql"
 )
 
 func exec(ctx context.Context, db *sql.DB, stmt string, args ...any) sql.Result {

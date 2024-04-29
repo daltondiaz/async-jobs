@@ -5,8 +5,7 @@ go 1.21.4
 require (
 	github.com/gin-gonic/gin v1.9.1
 	github.com/joho/godotenv v1.5.1
-	github.com/mattn/go-sqlite3 v1.14.22
-	github.com/robfig/cron/v3 v3.0.0
+	github.com/robfig/cron/v3 v3.0.1
 	github.com/tursodatabase/go-libsql v0.0.0-20240418131656-29cbe90b12a1
 	github.com/tursodatabase/libsql-client-go v0.0.0-20240416075003-747366ff79c4
 )
