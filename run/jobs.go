@@ -1,4 +1,4 @@
-package pkg
+package run
 
 import (
 	"daltondiaz/async-jobs/db"

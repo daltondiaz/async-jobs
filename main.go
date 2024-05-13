@@ -7,12 +7,12 @@ import (
 
 	"daltondiaz/async-jobs/conf"
 	"daltondiaz/async-jobs/http"
-	"daltondiaz/async-jobs/pkg"
+	"daltondiaz/async-jobs/run"
 )
 
 func main() {
     conf.LoadEnv()
-	pkg.Start()
+	run.Start()
     http.Start()
     listen()
 }

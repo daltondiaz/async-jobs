@@ -3,7 +3,7 @@ package http
 import (
 	"daltondiaz/async-jobs/db"
 	"daltondiaz/async-jobs/models"
-	"daltondiaz/async-jobs/pkg"
+	"daltondiaz/async-jobs/run"
 	"net/http"
 	"strconv"
 
@@ -26,7 +26,7 @@ func enabled(c *gin.Context) {
 	paramEnabled := c.Params.ByName("enabled")
 	id, _ := strconv.Atoi(paramId)
 	enabled, _ := strconv.ParseBool(paramEnabled)
-	status, err := pkg.EnabledJob(int64(id), enabled)
+	status, err := run.EnabledJob(int64(id), enabled)
 	if err != nil {
 		c.IndentedJSON(http.StatusNotFound, gin.H{
 			"message": "Not not exists or is unabled",
@@ -47,7 +47,7 @@ func enabled(c *gin.Context) {
 func status(c *gin.Context) {
 	paramId := c.Param("id")
 	id, _ := strconv.Atoi(paramId)
-	status, err := pkg.StatusJob(int64(id))
+	status, err := run.StatusJob(int64(id))
 	if err != nil {
 		c.IndentedJSON(http.StatusNotFound, gin.H{
 			"message": "Not not exists or is unabled",
@@ -73,7 +73,7 @@ func stopJob(c *gin.Context) {
 			"id":      paramId,
 		})
 	}
-	pkg.StopJob(job)
+	run.StopJob(job)
 	c.IndentedJSON(http.StatusCreated, job)
 }
 
@@ -90,7 +90,7 @@ func newJob(c *gin.Context) {
 	if err != nil {
 		c.IndentedJSON(http.StatusInternalServerError, gin.H{"error": "Job not created"})
 	}
-	pkg.AddJobNextExecution(job)
+	run.AddJobNextExecution(job)
 	c.IndentedJSON(http.StatusCreated, job)
 }
 
