@@ -20,7 +20,7 @@ func execution(job models.Job, c *cron.Cron) {
 	id, _ := c.AddFunc(job.Cron, func() {
 		lastestJob, _ := db.LoadJob(job.Id)
 		// The comment about its to see each execution of job
-        // slog.Info(fmt.Sprintf("LATEST_JOB %d: ", lastestJob.Id), "job", lastestJob.Executed)
+        slog.Info(fmt.Sprintf("LATEST_JOB %d: ", lastestJob.Id), "job", lastestJob.Executed)
 		if lastestJob.Executed != models.EXECUTING {
 			timeExec := time.Now().Unix()
 			slog.Info(fmt.Sprintf("START_EXEC Job %d: ", lastestJob.Id), "job", lastestJob.Name)

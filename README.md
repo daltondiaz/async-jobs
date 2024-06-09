@@ -27,7 +27,7 @@ If it's your first time run
 
 and to run the project
 
-`go run.`
+`go run .`
 
 ## Create/Configure .env (Required)
 
@@ -203,3 +203,9 @@ Response:
 	"status": "Job was Enabled with success"
 }
 ```
+
+## Tasks
+
+[ ] Execute a single job one time
+[ ] Add tests
+[ ] Separete logs

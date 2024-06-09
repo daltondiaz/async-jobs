@@ -9,7 +9,7 @@ import (
 	"log/slog"
 )
 
-// Check if table job exists, this help for now to don't use some migration framework
+// Check if table job exists, this help for now to don't use some migration lib
 func CheckExistsJobTable(target string) (bool, error) {
 	conn := GetConnection()
     query := "SELECT name FROM sqlite_master WHERE type='table' AND name=?"
