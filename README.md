@@ -29,6 +29,13 @@ and to run the project
 
 `go run .`
 
+or you can use [make](https://www.gnu.org/software/make/):
+
+- build: `make build`
+- run: run from a previous build `make run`
+- watch: running locally without build `make watch`
+- test: `make test`
+
 ## Create/Configure .env (Required)
 
 Create .env file in the root of project and configure the Turso variables.
