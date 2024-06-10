@@ -35,7 +35,7 @@ Create .env file in the root of project and configure the Turso variables.
 
 You can do 
 
-`cp example_env .env`
+`cp .env_example .env`
 
 and fill the parameters
 
@@ -43,6 +43,7 @@ and fill the parameters
 TURSO_DATABASE_URL=libsql://[DATABASE].turso.io
 TURSO_AUTH_TOKEN=[TOKEN]
 ENV=prod #prod or local, if not configured or any other value different of prod is local by default
+LIBSQL_PATH=/your/path/with/permission/to/read/write/local.db
 ```
 
 I use like example to be executed this simple php file:

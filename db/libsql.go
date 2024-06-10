@@ -48,7 +48,12 @@ func GetConnection() *sql.DB {
 }
 
 func getLocalConnection() *sql.DB {
-	dbName := "file:./local.db"
+    localDb, found :=  os.LookupEnv("LIBSQL_PATH")
+    
+    if !found {
+        log.Fatal("You should define the property LIBSQL_PATH in .env")
+    }
+    dbName := fmt.Sprintf("file:%s", localDb)
 	db, err := sql.Open("libsql", dbName)
 	if err != nil {
 		log.Fatal(err)
