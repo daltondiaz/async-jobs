@@ -16,7 +16,7 @@ type Job struct {
 }
 
 type Args struct {
-	Args string `json:"args"` // argument
+	Args []string `json:"args"` // argument
 	Path string `json:"path"` // path of file
 	Cmd  string `json:"cmd"`  // command to be executed
 }

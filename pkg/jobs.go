@@ -16,8 +16,8 @@ import (
 var cronJob *cron.Cron
 
 func execution(job models.Job, c *cron.Cron) {
-	slog.Info(fmt.Sprintf("JOB %d: ", job.Id), "job", job)
-	id, _ := c.AddFunc(job.Cron, func() {
+    slog.Info(fmt.Sprintf("JOB %d CRON %s : ", job.Id, job.Cron), "job", job)
+	id, err := c.AddFunc(job.Cron, func() {
 		lastestJob, _ := db.LoadJob(job.Id)
 		// The comment about its to see each execution of job
         slog.Info(fmt.Sprintf("LATEST_JOB %d: ", lastestJob.Id), "job", lastestJob.Executed)
@@ -25,7 +25,9 @@ func execution(job models.Job, c *cron.Cron) {
 			timeExec := time.Now().Unix()
 			slog.Info(fmt.Sprintf("START_EXEC Job %d: ", lastestJob.Id), "job", lastestJob.Name)
 			db.SetJobExecuted(lastestJob.Id, models.EXECUTING)
-			cmd := exec.Command(lastestJob.Args.Cmd, lastestJob.Args.Path, lastestJob.Args.Args)
+            args := []string{lastestJob.Args.Path}
+            args = append(args, lastestJob.Args.Args...)
+			cmd := exec.Command(lastestJob.Args.Cmd, args...)
 			stdout, err := cmd.Output()
 			if err != nil {
 				log.Println(err.Error())
@@ -35,6 +37,11 @@ func execution(job models.Job, c *cron.Cron) {
 			db.SetJobExecuted(lastestJob.Id, models.EXECUTED)
 		}
 	})
+
+    if err != nil {
+        slog.Error(fmt.Sprintf("ERROR_CRON job %d ",  job.Id), "err", err)
+    }
+
 	job.CronId = int(id)
 	db.SetCronId(job.Id, int(id))
 	slog.Info("CRON", "id", int(id))

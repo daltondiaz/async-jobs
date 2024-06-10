@@ -112,9 +112,9 @@ curl --request POST \
 	"cron": "@every 1s", 
 	"enabled": true,
 	"args": {
-		"args": "10",
+		"args": ["10"],
 		"cmd": "php",
-		"path": "/home/dalton/Dev/personal/async-jobs/test.php"
+		"path": "test.php"
 	}
 }'
 ```
@@ -214,6 +214,6 @@ Response:
 
 ## Tasks
 
-[ ] Execute a single job one time
-[ ] Add tests
-[ ] Separete logs
+- [ ] Execute a single job one time
+- [ ] Add tests
+- [ ] Separete logs

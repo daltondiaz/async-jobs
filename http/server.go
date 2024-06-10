@@ -29,7 +29,7 @@ func enabled(c *gin.Context) {
 	status, err := pkg.EnabledJob(int64(id), enabled)
 	if err != nil {
 		c.IndentedJSON(http.StatusNotFound, gin.H{
-			"message": "Not not exists or is unabled",
+			"message": "Not exists or is unabled",
 			"id":      paramId,
 			"enabled": paramEnabled,
 		})
