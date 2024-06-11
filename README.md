@@ -51,6 +51,7 @@ TURSO_DATABASE_URL=libsql://[DATABASE].turso.io
 TURSO_AUTH_TOKEN=[TOKEN]
 ENV=prod #prod or local, if not configured or any other value different of prod is local by default
 LIBSQL_PATH=/your/path/with/permission/to/read/write/local.db
+LOGS_DIR=/your/dir/with/permission/to/write
 ```
 
 I use like example to be executed this simple php file:
@@ -211,9 +212,20 @@ Response:
 	"status": "Job was Enabled with success"
 }
 ```
+## Logs
+
+The logs will be create to your directoy defined in `LOGS_DIR`, please 
+if will have permission to write, I used to `/var/log/` on linux
+
+- Api Request 
+- Job Changes
+- Errors
+
+The files will be save with the `type_timestamp.log`
 
 ## Tasks
 
-- [ ] Execute a single job one time
+- [x] Execute a single job one time
+- [x] Separete logs
 - [ ] Add tests
-- [ ] Separete logs
+- [x] Split logs files by day

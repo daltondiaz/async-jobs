@@ -9,24 +9,24 @@ import (
 )
 
 var (
-	InfoLog  *log.Logger
+    // Error log
 	ErrorLog *log.Logger
+    // Job log
 	JobLog   *log.Logger
+    // Job name to be used in the future to possible separations of
+    // log by job
 	Job      string
 )
 
+// Log File struct to be used like parameter to create new Log 
 type LogFile struct {
+    // Type of log error, job
 	TypeLog string
+    // Job name 
 	JobName string
 }
 
 func init() {
-	logFile, err := CreateLog(LogFile{"info", ""})
-	if err != nil {
-		log.Fatal("error to create info log", err)
-	}
-	InfoLog = log.New(logFile, "INFO ", log.Ldate|log.Ltime|log.Lshortfile)
-
 	ErrorFile, err := CreateLog(LogFile{"error", ""})
 	if err != nil {
 		log.Fatal("error to create error log")
@@ -40,6 +40,8 @@ func init() {
 	JobLog = log.New(JobFile, "JOB ", log.Ldate|log.Ltime|log.Lshortfile)
 }
 
+// Create a new log and return a os.File using the default directory
+// and error if happend something 
 func CreateLog(logFile LogFile) (*os.File, error) {
 	conf.LoadEnv()
 	logsDir := os.Getenv("LOGS_DIR")
