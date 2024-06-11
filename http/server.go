@@ -2,6 +2,7 @@ package http
 
 import (
 	"daltondiaz/async-jobs/db"
+	"daltondiaz/async-jobs/logs"
 	"daltondiaz/async-jobs/models"
 	"daltondiaz/async-jobs/pkg"
 	"net/http"
@@ -11,6 +12,8 @@ import (
 )
 
 func Start() {
+    apiFile, _ := logs.CreateLog(logs.LogFile{TypeLog: "api", JobName: ""})
+    gin.DefaultWriter = apiFile
 	router := gin.Default()
 	router.POST("/job/new", newJob)
 	router.GET("/job/stop/:id", stopJob)

@@ -6,8 +6,6 @@ import (
 	"daltondiaz/async-jobs/models"
 	"errors"
 	"fmt"
-	"log"
-	"log/slog"
 	"os/exec"
 	"time"
 
@@ -22,7 +20,7 @@ func execution(job models.Job, c *cron.Cron) {
 	id, err := c.AddFunc(job.Cron, func() {
 		lastestJob, _ := db.LoadJob(job.Id)
 		// The comment about its to see each execution of job
-        logs.JobLog.Println("LATEST_JOB ", lastestJob.Id, "job", lastestJob.Executed)
+        logs.JobLog.Println("LATEST_JOB ", lastestJob.Id, "job", lastestJob.Executed, "execution", lastestJob.Executed)
 		if lastestJob.Executed != models.EXECUTING {
 			timeExec := time.Now().Unix()
             logs.JobLog.Println("START_EXEC job id:", lastestJob.Id, "name:", lastestJob.Name)
@@ -46,14 +44,14 @@ func execution(job models.Job, c *cron.Cron) {
 
 	job.CronId = int(id)
     db.SetCronId(job.Id, int(id))
-    logs.InfoLog.Println("JOB_CREATED", "id", int(id))
+    logs.JobLog.Println("JOB_CREATED", "id", int(id), "name", job.Name, "description", job.Description, "cron", job.Cron)
 }
 
 // Start the crons to scheduler the jobs
 func Start() {
 	hasTableJob, err := db.CheckExistsJobTable("job")
 	if err != nil {
-		slog.Error("Error to check if main table job exists", "error", err)
+		logs.ErrorLog.Println("Error to check if main table job exists", "error", err)
 	}
 	if !hasTableJob {
 		db.CreateTableJobs()
@@ -61,7 +59,7 @@ func Start() {
 	db.SetAllJobsToExecute()
 	jobs, err := db.GetAvailableJobs()
 	if err != nil {
-		log.Println(err)
+		logs.ErrorLog.Println("START_APP", err)
 	}
 	cronJob = cron.New()
 	for _, job := range jobs {
@@ -78,7 +76,7 @@ func AddJobNextExecution(job models.Job) {
 // Stop job
 func StopJob(job models.Job) {
 	cronJob.Remove(cron.EntryID(job.CronId))
-    logs.DebugLog.Println("JOB_STOPPED", job.Id, "cron id", job.CronId)
+    logs.JobLog.Println("JOB_STOPPED", job.Id, "cron id", job.CronId)
 }
 
 // Get status Job to know if is running or not

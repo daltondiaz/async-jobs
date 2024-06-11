@@ -21,26 +21,26 @@ type LogFile struct {
 }
 
 func init() {
-	logFile, err := createLog(LogFile{"info", ""})
+	logFile, err := CreateLog(LogFile{"info", ""})
 	if err != nil {
 		log.Fatal("error to create info log", err)
 	}
 	InfoLog = log.New(logFile, "INFO ", log.Ldate|log.Ltime|log.Lshortfile)
 
-	ErrorFile, err := createLog(LogFile{"error", ""})
+	ErrorFile, err := CreateLog(LogFile{"error", ""})
 	if err != nil {
-		log.Fatal("error to create debug log")
+		log.Fatal("error to create error log")
 	}
 	ErrorLog = log.New(ErrorFile, "ERROR ", log.Ldate|log.Ltime|log.Lshortfile)
 
-	JobFile, err := createLog(LogFile{"job", Job})
+	JobFile, err := CreateLog(LogFile{"job", Job})
 	if err != nil {
-		log.Fatal("error to create debug log")
+		log.Fatal("error to create job log")
 	}
 	JobLog = log.New(JobFile, "JOB ", log.Ldate|log.Ltime|log.Lshortfile)
 }
 
-func createLog(logFile LogFile) (*os.File, error) {
+func CreateLog(logFile LogFile) (*os.File, error) {
 	conf.LoadEnv()
 	logsDir := os.Getenv("LOGS_DIR")
 	nameFile := fmt.Sprintf("%s/%s_%d.log", logsDir, logFile.TypeLog, time.Now().Unix())
