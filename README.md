@@ -52,6 +52,7 @@ TURSO_AUTH_TOKEN=[TOKEN]
 ENV=prod #prod or local, if not configured or any other value different of prod is local by default
 LIBSQL_PATH=/your/path/with/permission/to/read/write/local.db
 LOGS_DIR=/your/dir/with/permission/to/write
+PORT_API=8080
 ```
 
 I use like example to be executed this simple php file:

@@ -20,7 +20,7 @@ func execution(job models.Job, c *cron.Cron) {
 	id, err := c.AddFunc(job.Cron, func() {
 		lastestJob, _ := db.LoadJob(job.Id)
 		// The comment about its to see each execution of job
-        logs.JobLog.Println("LATEST_JOB ", lastestJob.Id, "job", lastestJob.Executed, "execution", lastestJob.Executed)
+        // logs.JobLog.Println("LATEST_JOB ", lastestJob.Id, "job", lastestJob.Executed, "execution", lastestJob.Executed)
 		if lastestJob.Executed != models.EXECUTING {
 			timeExec := time.Now().Unix()
             logs.JobLog.Println("START_EXEC job id:", lastestJob.Id, "name:", lastestJob.Name)
@@ -47,7 +47,7 @@ func execution(job models.Job, c *cron.Cron) {
     logs.JobLog.Println("JOB_CREATED", "id", int(id), "name", job.Name, "description", job.Description, "cron", job.Cron)
 }
 
-// Start the crons to scheduler the jobs
+// Start the application
 func Start() {
 	hasTableJob, err := db.CheckExistsJobTable("job")
 	if err != nil {

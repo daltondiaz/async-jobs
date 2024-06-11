@@ -1,12 +1,12 @@
 package main
 
 import (
-	"log"
 	"os"
 	"os/signal"
 
 	"daltondiaz/async-jobs/conf"
 	"daltondiaz/async-jobs/http"
+	"daltondiaz/async-jobs/logs"
 	"daltondiaz/async-jobs/pkg"
 )
 
@@ -23,5 +23,5 @@ func listen() {
     sig := make(chan os.Signal)
     signal.Notify(sig, os.Interrupt, os.Kill)
     <-sig
-    log.Println("Finished job")
+    logs.JobLog.Println("Application stopped")
 }

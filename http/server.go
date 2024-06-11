@@ -5,22 +5,25 @@ import (
 	"daltondiaz/async-jobs/logs"
 	"daltondiaz/async-jobs/models"
 	"daltondiaz/async-jobs/pkg"
+	"fmt"
 	"net/http"
+	"os"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
 
+// Start the endpoint of api
 func Start() {
-    apiFile, _ := logs.CreateLog(logs.LogFile{TypeLog: "api", JobName: ""})
-    gin.DefaultWriter = apiFile
+	apiFile, _ := logs.CreateLog(logs.LogFile{TypeLog: "api", JobName: ""})
+	gin.DefaultWriter = apiFile
 	router := gin.Default()
 	router.POST("/job/new", newJob)
 	router.GET("/job/stop/:id", stopJob)
 	router.GET("/job/status/:id", status)
 	router.GET("/job/enabled/:id/:enabled", enabled)
 	router.GET("/health", health)
-	router.Run("localhost:8080")
+	router.Run(fmt.Sprintf("localhost:%s", os.Getenv("PORT_API")))
 }
 
 // Stop the cron job of on job
