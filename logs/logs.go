@@ -9,20 +9,20 @@ import (
 )
 
 var (
-    // Error log
+	// Error log
 	ErrorLog *log.Logger
-    // Job log
-	JobLog   *log.Logger
-    // Job name to be used in the future to possible separations of
-    // log by job
-	Job      string
+	// Job log
+	JobLog *log.Logger
+	// Job name to be used in the future to possible separations of
+	// log by job
+	Job string
 )
 
-// Log File struct to be used like parameter to create new Log 
+// Log File struct to be used like parameter to create new Log
 type LogFile struct {
-    // Type of log error, job
+	// Type of log error, job
 	TypeLog string
-    // Job name 
+	// Job name
 	JobName string
 }
 
@@ -41,7 +41,7 @@ func init() {
 }
 
 // Create a new log and return a os.File using the default directory
-// and error if happend something 
+// and error if happend something
 func CreateLog(logFile LogFile) (*os.File, error) {
 	conf.LoadEnv()
 	logsDir := os.Getenv("LOGS_DIR")

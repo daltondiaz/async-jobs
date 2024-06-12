@@ -11,17 +11,17 @@ import (
 )
 
 func main() {
-    conf.LoadEnv()
+	conf.LoadEnv()
 	pkg.Start()
-    http.Start()
-    listen()
+	http.Start()
+	listen()
 }
 
 // hack to only finish when stop the terminal
 // this help a lot to test before of http running
 func listen() {
-    sig := make(chan os.Signal)
-    signal.Notify(sig, os.Interrupt, os.Kill)
-    <-sig
-    logs.JobLog.Println("Application stopped")
+	sig := make(chan os.Signal)
+	signal.Notify(sig, os.Interrupt, os.Kill)
+	<-sig
+	logs.JobLog.Println("Application stopped")
 }

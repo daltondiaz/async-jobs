@@ -33,7 +33,7 @@ func GetConnection() *sql.DB {
 	env := os.Getenv("ENV")
 
 	if strings.ToLower("prod") != env {
-        return getLocalConnection()
+		return getLocalConnection()
 	}
 
 	database := os.Getenv("TURSO_DATABASE_URL")
@@ -48,12 +48,12 @@ func GetConnection() *sql.DB {
 }
 
 func getLocalConnection() *sql.DB {
-    localDb, found :=  os.LookupEnv("LIBSQL_PATH")
-    
-    if !found {
-        logs.ErrorLog.Fatal("You should define the property LIBSQL_PATH in .env")
-    }
-    dbName := fmt.Sprintf("file:%s", localDb)
+	localDb, found := os.LookupEnv("LIBSQL_PATH")
+
+	if !found {
+		logs.ErrorLog.Fatal("You should define the property LIBSQL_PATH in .env")
+	}
+	dbName := fmt.Sprintf("file:%s", localDb)
 	db, err := sql.Open("libsql", dbName)
 	if err != nil {
 		logs.ErrorLog.Fatal(err)
