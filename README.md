@@ -1,17 +1,18 @@
 # Async Jobs
 
-This project has the goal to "manage" async jobs, when I say manage is not executing the one function
-if it is running and can execute many jobs asynchronously. 
+> [First make it work, then make it right, then make it fast. — @KentBeck](https://twitter.com/unclebobmartin/status/1784306424908030012)
+
+This project has the goal to "manage" async jobs, when I say manage is not executing the one function, but is running and can execute many jobs asynchronously. 
 
 ![](docs/flow_project.png)
 
 ## Problem/Solution
 
-When I'm using Php sometimes we need to execute tasks or jobs in the background, but the concept of Threads
-was not implemented in a simple way, and sometimes we need to use many other tools to do that, for example: Php send a message to one queue in RabbitMQ, and Supervisord call other Php file who read the message of queue and run something stuff in one process.
+When I'm using PHP sometimes we need to execute tasks or jobs in the background, but the concept of Threads
+was not implemented in a simple way on PHP, and sometimes we need to use many other tools to do that, for example: PHP send a message to one queue in RabbitMQ, and [Supervisord](http://supervisord.org/)
+call other PHP/bash file who read the message of queue and run something stuff in one process.
 
-For solving this, I thought in using the power of Go Lang to create a simple application to solve.
-
+For solving this, I thought in using the power of Go Lang to create a simple application.
 
 # Required
 
@@ -26,7 +27,14 @@ If it's your first time run
 
 and to run the project
 
-`go run.`
+`go run .`
+
+or you can use [make](https://www.gnu.org/software/make/):
+
+- build: `make build`
+- run: run from a previous build `make run`
+- watch: running locally without build `make watch`
+- test: `make test`
 
 ## Create/Configure .env (Required)
 
@@ -34,7 +42,7 @@ Create .env file in the root of project and configure the Turso variables.
 
 You can do 
 
-`cp example_env .env`
+`cp .env_example .env`
 
 and fill the parameters
 
@@ -42,6 +50,9 @@ and fill the parameters
 TURSO_DATABASE_URL=libsql://[DATABASE].turso.io
 TURSO_AUTH_TOKEN=[TOKEN]
 ENV=prod #prod or local, if not configured or any other value different of prod is local by default
+LIBSQL_PATH=/your/path/with/permission/to/read/write/local.db
+LOGS_DIR=/your/dir/with/permission/to/write
+PORT_API=8080
 ```
 
 I use like example to be executed this simple php file:
@@ -103,9 +114,9 @@ curl --request POST \
 	"cron": "@every 1s", 
 	"enabled": true,
 	"args": {
-		"args": "10",
+		"args": ["10"],
 		"cmd": "php",
-		"path": "/home/dalton/Dev/personal/async-jobs/test.php"
+		"path": "test.php"
 	}
 }'
 ```
@@ -202,3 +213,20 @@ Response:
 	"status": "Job was Enabled with success"
 }
 ```
+## Logs
+
+The logs will be create to your directoy defined in `LOGS_DIR`, please 
+if will have permission to write, I used to `/var/log/` on linux
+
+- Api Request 
+- Job Changes
+- Errors
+
+The files will be save with the `type_timestamp.log`
+
+## Tasks
+
+- [x] Execute a single job one time
+- [x] Separete logs
+- [ ] Add tests
+- [x] Split logs files by day

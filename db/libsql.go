@@ -2,9 +2,9 @@ package db
 
 import (
 	"context"
+	"daltondiaz/async-jobs/logs"
 	"database/sql"
 	"fmt"
-	"log"
 	"os"
 	"strings"
 
@@ -15,7 +15,7 @@ import (
 func exec(ctx context.Context, db *sql.DB, stmt string, args ...any) sql.Result {
 	res, err := db.ExecContext(ctx, stmt, args)
 	if err != nil {
-		log.Printf("failed to execute statement %s: %s", stmt, err)
+		logs.ErrorLog.Printf("failed to execute statement %s: %s", stmt, err)
 		os.Exit(1)
 	}
 	return res
@@ -24,7 +24,7 @@ func exec(ctx context.Context, db *sql.DB, stmt string, args ...any) sql.Result 
 func ping(ctx context.Context, db *sql.DB) {
 	err := db.PingContext(ctx)
 	if err != nil {
-		log.Printf("failed to ping in database: %s", err)
+		logs.ErrorLog.Printf("failed to ping in database: %s", err)
 		os.Exit(1)
 	}
 }
@@ -33,7 +33,7 @@ func GetConnection() *sql.DB {
 	env := os.Getenv("ENV")
 
 	if strings.ToLower("prod") != env {
-        return getLocalConnection()
+		return getLocalConnection()
 	}
 
 	database := os.Getenv("TURSO_DATABASE_URL")
@@ -41,17 +41,22 @@ func GetConnection() *sql.DB {
 	dbName := fmt.Sprintf("%s?authToken=%s", database, token)
 	db, err := sql.Open("libsql", dbName)
 	if err != nil {
-		log.Fatal(err)
+		logs.ErrorLog.Fatal(err)
 		os.Exit(1)
 	}
 	return db
 }
 
 func getLocalConnection() *sql.DB {
-	dbName := "file:./local.db"
+	localDb, found := os.LookupEnv("LIBSQL_PATH")
+
+	if !found {
+		logs.ErrorLog.Fatal("You should define the property LIBSQL_PATH in .env")
+	}
+	dbName := fmt.Sprintf("file:%s", localDb)
 	db, err := sql.Open("libsql", dbName)
 	if err != nil {
-		log.Fatal(err)
+		logs.ErrorLog.Fatal(err)
 	}
 	ctx := context.Background()
 	ping(ctx, db)
