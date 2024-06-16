@@ -4,7 +4,7 @@ import (
 	"daltondiaz/async-jobs/db"
 	"daltondiaz/async-jobs/logs"
 	"daltondiaz/async-jobs/models"
-	"daltondiaz/async-jobs/pkg"
+	"daltondiaz/async-jobs/run"
 	"fmt"
 	"net/http"
 	"os"
