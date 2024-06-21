@@ -230,3 +230,4 @@ The files will be save with the `type_timestamp.log`
 - [x] Separete logs
 - [ ] Add tests
 - [x] Split logs files by day
+- [ ] Write better logs and compress then after 1 day or by size
