@@ -6,15 +6,15 @@ import (
 
 	"daltondiaz/async-jobs/conf"
 	"daltondiaz/async-jobs/http"
-	"daltondiaz/async-jobs/run"
 	"daltondiaz/async-jobs/logs"
+	"daltondiaz/async-jobs/run"
 )
 
 func main() {
-    conf.LoadEnv()
+	conf.LoadEnv()
 	run.Start()
-    http.Start()
-    listen()
+	http.Start()
+	listen()
 }
 
 // hack to only finish when stop the terminal
