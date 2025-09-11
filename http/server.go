@@ -55,6 +55,7 @@ func status(c *gin.Context) {
 	id, _ := strconv.Atoi(paramId)
 	status, err := pkg.StatusJob(int64(id))
 	if err != nil {
+		logs.ErrorLog.Println("API|status|ErrorGetStatusJob",err)
 		c.IndentedJSON(http.StatusNotFound, gin.H{
 			"message": "Not not exists or is unabled",
 			"id":      paramId,
@@ -74,6 +75,7 @@ func stopJob(c *gin.Context) {
 	id, _ := strconv.Atoi(paramId)
 	job, err := db.LoadJob(int64(id))
 	if err != nil {
+		logs.ErrorLog.Println("API|stopJob|ErrorLoadJob",err)
 		c.IndentedJSON(http.StatusNotFound, gin.H{
 			"message": "Not not exists or is unabled",
 			"id":      paramId,
@@ -87,6 +89,7 @@ func stopJob(c *gin.Context) {
 func newJob(c *gin.Context) {
 	var job models.Job
 	if err := c.BindJSON(&job); err != nil {
+		logs.ErrorLog.Println("API|newJob|convertJson",err )
 		return
 	}
 	job, err := db.InsertJob(job)
@@ -94,6 +97,7 @@ func newJob(c *gin.Context) {
 	// no try/catchs this is awesome for devs
 	// who works with Java/Php and other languages who use that
 	if err != nil {
+		logs.ErrorLog.Println("API|newJob|Insert Job",err )
 		c.IndentedJSON(http.StatusInternalServerError, gin.H{"error": "Job not created"})
 	}
 	pkg.AddJobNextExecution(job)
